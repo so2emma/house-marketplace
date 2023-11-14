@@ -1,11 +1,16 @@
 import { useState } from "react";
-import {toast} from 'react-toastify'
+import { toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
-import { getAuth, createUserWithEmailAndPassword,updateProfile } from "firebase/auth";
-import {db} from '../firebase.config'
-import { setDoc,doc, serverTimestamp } from "firebase/firestore";
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  updateProfile,
+} from "firebase/auth";
+import { db } from "../firebase.config";
+import { setDoc, doc, serverTimestamp } from "firebase/firestore";
 import { ReactComponent as ArrowRightIcon } from "../assets/svg/keyboardArrowRightIcon.svg";
 import visibilityIcon from "../assets/svg/visibilityIcon.svg";
+import OAuth from "../components/OAuth";
 
 function SignUp() {
   const [showPassowrd, setShowPassowrd] = useState(false);
@@ -26,29 +31,33 @@ function SignUp() {
   };
 
   const onSubmit = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
 
     try {
-      const auth = getAuth()
+      const auth = getAuth();
 
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password)
-      const user =  userCredential.user
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      const user = userCredential.user;
 
       updateProfile(auth.currentUser, {
-        displayName: name
-      })
+        displayName: name,
+      });
 
-      const formDataCopy = {...formData}
-      delete formDataCopy.password
-      formDataCopy.timestamp = serverTimestamp()
+      const formDataCopy = { ...formData };
+      delete formDataCopy.password;
+      formDataCopy.timestamp = serverTimestamp();
 
-      await setDoc(doc(db, 'users', user.uid), formDataCopy)
+      await setDoc(doc(db, "users", user.uid), formDataCopy);
 
-      navigate("/")
+      navigate("/");
     } catch (error) {
-      toast.error('Something Went Wrong With Registration')
+      toast.error("Something Went Wrong With Registration");
     }
-  }
+  };
 
   return (
     <>
@@ -110,7 +119,7 @@ function SignUp() {
             </div>
           </form>
 
-          {/* {Google Auth} */}
+          <OAuth />
 
           <Link to="/sign-in" className="registerLink">
             Sign In Instead
