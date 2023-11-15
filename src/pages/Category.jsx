@@ -13,6 +13,7 @@ import {
 import { db } from "../firebase.config";
 import { toast } from "react-toastify";
 import Spinner from "../components/Spinner";
+import ListingItem from "../components/ListingItem";
 
 function Category() {
   const [listings, setListings] = useState();
@@ -21,13 +22,12 @@ function Category() {
   const params = useParams();
 
   useEffect(() => {
-
     const fetchListings = async () => {
-    console.log('got here')
+      console.log("got here");
 
       try {
         // get a reference
-        const listingsRef = collection(db, 'listings');
+        const listingsRef = collection(db, "listings");
 
         // create a query
         const q = query(
@@ -52,7 +52,7 @@ function Category() {
       }
     };
 
-    fetchListings()
+    fetchListings();
   }, [params.categoryName]);
 
   return (
@@ -65,16 +65,25 @@ function Category() {
         </p>
       </header>
 
-      {loading ? <Spinner/> : listings && listings.length > 0 ? 
-      <>
-      <main>
-        <ul className="categoryListings">
-            {listings.map((listing) => (
-                <h3 key={listings.id}>{listing.data.name}</h3>
-            ))}
-        </ul>
-      </main>
-      </> : <p>No listings for {params.categoryName}</p>}
+      {loading ? (
+        <Spinner />
+      ) : listings && listings.length > 0 ? (
+        <>
+          <main>
+            <ul className="categoryListings">
+              {listings.map((listing) => (
+                <ListingItem
+                  listing={listing.data}
+                  id={listing.id}
+                  key={listing.id}
+                />
+              ))}
+            </ul>
+          </main>
+        </>
+      ) : (
+        <p>No listings for {params.categoryName}</p>
+      )}
     </div>
   );
 }
